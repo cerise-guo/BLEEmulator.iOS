@@ -50,7 +50,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         NSLog("performFetchWithCompletionHandler")
         
-        BackgroundDelegate.instance.trigger()        
+#if SIM_BLE
+        BackgroundDelegate.instance.trigger()
+#endif
     }
 }
 
