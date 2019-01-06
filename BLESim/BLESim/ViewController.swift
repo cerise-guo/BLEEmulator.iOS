@@ -101,8 +101,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         NSLog("OnClick G - read value")
         
         if( nil != self.batteryLevel ){
-            
             peripheral?.readValue(for: self.batteryLevel!)  //setNotifyValue(registerStatus, for: heartRateMeasurement! )
+        }else{
+            NSLog("have no battery characteristic")
         }
     }
     
@@ -116,6 +117,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         NSLog( "didDiscover : \(String(describing: peripheral.name)), \(peripheral.identifier) , RSSI : \(RSSI)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
         
         if( nil == self.peripheral ){
 
@@ -133,6 +135,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         NSLog( "connected to peripheral : \(peripheral.identifier)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
+        
         assert( peripheral.name == self.targetDeviceName )
         
         DispatchQueue.main.async() {
@@ -150,6 +154,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         NSLog("did disconnect : \(peripheral.identifier.uuidString)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
         
         self.batteryLevel = nil
         self.heartRateControlPoint = nil
@@ -162,6 +167,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?){
         NSLog("did didUpdateNotificationStateFor : \(peripheral.identifier.uuidString)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
         
         DispatchQueue.main.async() {
             self.statusLabel.text =  "notifying : \(characteristic.isNotifying)"
@@ -170,6 +176,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         NSLog("didUpdateValueFor : \(characteristic.uuid.uuidString)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
+        
         if (nil != characteristic.value){
             
             //let valueString = String(data: characteristic.value!, encoding: String.Encoding.utf8)
@@ -194,6 +202,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         NSLog( "peripheral didDiscoverServices for \(peripheral.identifier)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
         
         if( peripheral.identifier == self.peripheral?.identifier ){
             
@@ -282,6 +291,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         NSLog("didWriteValueFor : \(characteristic.uuid.uuidString) , \(error.debugDescription)")
+        NSLog(" queue name: \(String(describing: currentQueueName()))")
         
         DispatchQueue.main.async() {
             self.statusLabel.text = "wrote target characteristic"
@@ -320,10 +330,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     
-    func registerHeartRateMeasurement(){
-        NSLog("enter registerHeartRateMeasurement")
-        
-        
+    func currentQueueName() -> String? {
+        let name = __dispatch_queue_get_label(nil)
+        return String(cString: name, encoding: .utf8)
     }
 }
 

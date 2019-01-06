@@ -93,10 +93,7 @@ class CBCentralManagerService{
                 //So far, I can only image one app should initate one central manager.
                 assert( 1 == self.centralManagers.count )
                 
-                //weak var centralMgr = manager
-                
                 self.validateManager(manager: manager)
-                
                 self.scanHandler!.scan( manager )
                 
             case .STOP_SCAN:
@@ -131,6 +128,10 @@ class CBCentralManagerService{
                     //to call caller's disconnection callback later.
                     //After connection, remove the strong reference
                     //Bad action: self.connectionHandlers[peripheral.identifier] = nil
+                    
+                    //set the callback queue once only for later ble communication
+                    let delegate = SimCBPeripheralImpl.instance
+                    delegate.setDisptachQueue(queue: manager.dispatchCallbackQueue)
                 }
 
             case .DISCONNECT( let peripheral ):

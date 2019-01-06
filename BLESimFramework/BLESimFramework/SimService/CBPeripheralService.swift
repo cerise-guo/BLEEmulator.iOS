@@ -52,7 +52,7 @@ class CBPeripheralService{
     }
     
     public func register( peripheral:CBPeripheral ){
-        peripheral._requestBlock = self.DispatchMessage
+        peripheral.requestBlock = self.DispatchMessage
     }
     
     private func DispatchMessage(request:PeripheralRequest, peripheral:CBPeripheral)->Bool

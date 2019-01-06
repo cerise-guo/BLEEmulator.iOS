@@ -23,7 +23,7 @@ open class CBPeripheral: CBPeer {
     let requestQueue:DispatchQueue
     let requestQueueName:String = "PeripheralRequestQueue"
     
-    var _requestBlock: PeripheralRequestBlock?
+    fileprivate var _requestBlock: PeripheralRequestBlock?
     
     fileprivate let peripheralService:CBPeripheralService
     

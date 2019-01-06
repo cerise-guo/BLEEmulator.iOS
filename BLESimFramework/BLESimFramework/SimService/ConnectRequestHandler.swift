@@ -61,10 +61,9 @@ public class ConnectRequestHandler  : ConnectRequestProtocol {
             GLog.d("will return connection result")
             
             cbmanager?.centralMgrDelegate?.centralManager!(cbmanager!, didConnect: peripheral)
-            
-            complete("")
         }
         timer?.resume()
+        complete("")
     }
     
     public func disconnect( cbmanager:CBCentralManager?, peripheral:CBPeripheral){

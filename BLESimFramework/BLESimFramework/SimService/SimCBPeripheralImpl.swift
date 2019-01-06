@@ -11,9 +11,7 @@ import Foundation
 class SimCBPeripheralImpl : NSObject {
     
     //async queue for internal request process.
-    private let concurrentResultQueue = DispatchQueue(
-        label: "ble-result-queue",
-        attributes: .concurrent)
+    private var resultQueue:DispatchQueue?
     
     fileprivate static var delegate = createInstance()
     
@@ -23,8 +21,14 @@ class SimCBPeripheralImpl : NSObject {
     }
     
     public static var instance:SimCBPeripheralImpl{
-        get{
-            return delegate
+        get{ return delegate }
+    }
+    
+    public func setDisptachQueue( queue:DispatchQueue ){
+        if( nil == self.resultQueue ){
+            self.resultQueue = queue
+        }else{
+            assert(false, "set dispatch queue twice")
         }
     }
     
@@ -55,6 +59,7 @@ class SimCBPeripheralImpl : NSObject {
     private func leaveGroup(){
         GLog.d("leaveGroup")
         if( enteredGroup ){
+            enteredGroup = false
             dispatchGroup!.leave()
         }
     }
@@ -81,17 +86,20 @@ class SimCBPeripheralImpl : NSObject {
             service.setCharacteristic( characteristics: character )
         }
         
+        assert(nil != self.resultQueue, "empty result queue")
+        
         //the delegate's behavior is from caller, it should not block/delay the simulator
         //code here, so a async call is used.
         if( backgroundMode ){
             enterGroup()
-            dispatchGroup?.notify(queue: self.concurrentResultQueue){
-                GLog.d("continue delegate callback")
+            GLog.d("continue delegate callback")
+            dispatchGroup?.notify(queue: self.resultQueue!){
+                GLog.d("call delegate callback")
                 peripheral.delegate?.peripheral(peripheral, didDiscoverCharacteristicsFor: service, error:nil)
             }
         }
         else{
-            self.concurrentResultQueue.async(flags: .barrier){
+            self.resultQueue?.async(flags: .barrier){
                 peripheral.delegate?.peripheral(peripheral, didDiscoverCharacteristicsFor: service, error:nil)
             }
         }
@@ -120,11 +128,22 @@ class SimCBPeripheralImpl : NSObject {
             serviceContainer.register(service: service)
             peripheral.appendServices(service: service)
         }
+        assert(nil != self.resultQueue, "empty result queue")
         
         //the delegate's behavior is from caller, it should not block/delay the simulator
         //code here, so a async call is used.
-        self.concurrentResultQueue.async(flags: .barrier){
-            peripheral.delegate?.peripheral(peripheral, didDiscoverServices: nil)
+        if( backgroundMode ){
+            enterGroup()
+            GLog.d("continue delegate callback")
+            dispatchGroup?.notify(queue: self.resultQueue!){
+                GLog.d("call delegate callback")
+                peripheral.delegate?.peripheral(peripheral, didDiscoverServices: nil)
+            }
+        }
+        else{
+            self.resultQueue!.async(flags: .barrier){
+                peripheral.delegate?.peripheral(peripheral, didDiscoverServices: nil)
+            }
         }
     }
     
@@ -145,9 +164,21 @@ class SimCBPeripheralImpl : NSObject {
                 }
             }
             
-            self.concurrentResultQueue.async(flags: .barrier){
-                GLog.d()
-                peripheral.delegate?.peripheral(peripheral, didUpdateNotificationStateFor: char, error:nil)
+            assert(nil != self.resultQueue, "empty result queue")
+            
+            if( backgroundMode ){
+                enterGroup()
+                GLog.d("continue delegate callback")
+                dispatchGroup?.notify(queue: self.resultQueue!){
+                    GLog.d("call delegate callback")
+                    peripheral.delegate?.peripheral(peripheral, didUpdateNotificationStateFor: char, error:nil)
+                }
+            }
+            else{
+                self.resultQueue!.async(flags: .barrier){
+                    GLog.d()
+                    peripheral.delegate?.peripheral(peripheral, didUpdateNotificationStateFor: char, error:nil)
+                }
             }
         }else{
             GLog.w("can not find target charactertistic")
@@ -171,13 +202,23 @@ class SimCBPeripheralImpl : NSObject {
                 NSLog("value wrote : \(value)")
             }
             
+            assert(nil != self.resultQueue, "empty result queue")
             if( type == .withResponse){
                 GLog.d()
-                self.concurrentResultQueue.async(flags: .barrier){
-                    peripheral.delegate?.peripheral(peripheral, didWriteValueFor: char, error: nil)
+                if( backgroundMode ){
+                    enterGroup()
+                    GLog.d("continue delegate callback")
+                    dispatchGroup?.notify(queue: self.resultQueue!){
+                        GLog.d("call delegate callback")
+                        peripheral.delegate?.peripheral(peripheral, didWriteValueFor: char, error: nil)
+                    }
+                }
+                else{
+                    self.resultQueue!.async(flags: .barrier){
+                        peripheral.delegate?.peripheral(peripheral, didWriteValueFor: char, error: nil)
+                    }
                 }
             }
-            
         }else{
             GLog.w("can not find target charactertistic")
             assert( false, "can not find target charactertistic")
@@ -192,10 +233,21 @@ class SimCBPeripheralImpl : NSObject {
             let data = Data([123,122,121,120])
             char.setValue(data: data)
             
-            self.concurrentResultQueue.async(flags: .barrier){
-                peripheral.delegate?.peripheral(peripheral, didUpdateValueFor: char, error: nil)
-            }
+            assert(nil != self.resultQueue, "empty result queue")
             
+            if( backgroundMode ){
+                enterGroup()
+                GLog.d("continue delegate callback")
+                dispatchGroup?.notify(queue: self.resultQueue!){
+                    GLog.d("call delegate callback")
+                    peripheral.delegate?.peripheral(peripheral, didUpdateValueFor: char, error: nil)
+                }
+            }
+            else{
+                self.resultQueue!.async(flags: .barrier){
+                    peripheral.delegate?.peripheral(peripheral, didUpdateValueFor: char, error: nil)
+                }
+            }
         }else{
             GLog.w("can not find target charactertistic")
             assert( false, "can not find target charactertistic")

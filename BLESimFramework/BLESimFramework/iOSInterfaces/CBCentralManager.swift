@@ -28,8 +28,8 @@ open class CBCentralManager : CBManager {
     public init(delegate: CBCentralManagerDelegate?, queue: DispatchQueue?, options: [String : Any]? = nil){
         
         if( nil == queue ){
-            //By default, the dispatch queue is serialized so the order of data package can be kept as original
-            dispatchCallbackQueue = DispatchQueue( label: dispatchQueueName, qos: DispatchQoS.userInitiated )
+            //By default, the dispatch queue is main queue as official document
+            dispatchCallbackQueue = DispatchQueue.main
         }else{
             dispatchCallbackQueue = queue!
         }
