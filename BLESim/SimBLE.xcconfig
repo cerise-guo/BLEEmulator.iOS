@@ -1,0 +1,13 @@
+//
+//  SimBLE.xcconfig
+//  BLESim
+//
+//  Created by CeriseGuo on 12/28/17.
+//  Copyright © 2017 CeriseGuo. All rights reserved.
+//
+
+//the 'SIM_DEFINE' defines the full expression where symbol name is 'SIM_BLE' and value is '1' which means being defined.
+//the 'SIM_NAME' defines the symbol name only which should be same as the symbol name defined in "SIM_DEFINE".
+//Both of 'SIM_DEFINE' and 'SIM_NAME' are optional, they can be declared directly in the project setting instead of xcconfig file.
+SIM_DEFINE=SIM_BLE=1
+SIM_SYM_NAME=SIM_BLE
