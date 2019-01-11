@@ -4,12 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>DemoApp.RegularBLE.xcscheme</key>
+		<key>DemoApp.RegularBLE.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>DemoApp.SimBLE.xcscheme</key>
+		<key>DemoApp.SimBLE.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
