@@ -1,6 +1,6 @@
 # BLE Simulator
 
-This BLE emulator is a library which simulates mobile OS Bluetooth Low Energy behavior by mocking mobile OS BLE interface.
+This BLE simulator is a library which simulates mobile OS Bluetooth Low Energy behavior by mocking mobile OS BLE interface.
 
 # Goal of Project
 
@@ -20,7 +20,7 @@ The goal of this project is to fully simulate mobile OS BLE interaction in appli
 | ------ | ------ |
 | Architecture and Design | [Design.md](https://github.com/cerise-guo/BLESimulator.Design/blob/master/Design.md) |
 | Status and Todo | [Status.md](https://github.com/cerise-guo/BLESimulator.Design/blob/master/Status.md) |
-| How to use in Android | [AndroidHelp.md](AndroidHelp.md) |
-| How to use in iOS | [iOSHelp.md](iOSHelp.md) |
+| How to use in Android | [AndroidHelp.md](https://github.com/cerise-guo/BLESimulator.Design/blob/master/AndroidHelp.md) |
+| How to use in iOS | [iOSHelp.md](https://github.com/cerise-guo/BLESimulator.Design/blob/master/iOSHelp.md) |
 
  
