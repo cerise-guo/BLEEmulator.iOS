@@ -4,7 +4,7 @@ This BLE simulator is a library which simulates mobile OS Bluetooth Low Energy b
 
 # Goal of Project
 
-The goal of this project is to fully simulate mobile OS BLE interaction in application layer with minimum application code change.
+The goal of this project is to fully simulate mobile OS BLE interaction in application layer, and allow running mobile BLE application without real BLE peripheral.
 
 # Challenge During Mobile BLE Development
  * Hard to run automatic test with synchronized BLE peripheral hardware
